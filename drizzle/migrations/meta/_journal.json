@@ -8,6 +8,20 @@
       "when": 1791099588598,
       "tag": "0000_store_base",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791099605552,
+      "tag": "0001_store_function_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791099625874,
+      "tag": "0002_store_extras",
+      "breakpoints": true
     }
   ]
 }
