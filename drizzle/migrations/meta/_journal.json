@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791019947254,
+      "tag": "0000_fix_public_catalog_role_policy",
+      "breakpoints": true
+    }
+  ]
 }
