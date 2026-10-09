@@ -28,9 +28,9 @@ import { Route as PackagesIndexRouteImport } from './routes/packages.index'
 import { Route as PackagesSlugRouteImport } from './routes/packages.$slug'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as AuthenticatedInvoiceIdRouteImport } from './routes/_authenticated/invoice.$id'
-import { Route as AuthenticatedAdminCouponsNewRouteImport } from './routes/_authenticated/admin_.coupons.new'
-import { Route as AuthenticatedAdminPackagesNewRouteImport } from './routes/_authenticated/admin_.packages.new'
-import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin_.products.new'
+import { Route as AuthenticatedAdminCouponsNewRouteImport } from './routes/_authenticated/admin.coupons.new'
+import { Route as AuthenticatedAdminPackagesNewRouteImport } from './routes/_authenticated/admin.packages.new'
+import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin.products.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -128,21 +128,21 @@ const AuthenticatedInvoiceIdRoute = AuthenticatedInvoiceIdRouteImport.update({
 } as any)
 const AuthenticatedAdminCouponsNewRoute =
   AuthenticatedAdminCouponsNewRouteImport.update({
-    id: '/admin_/coupons/new',
-    path: '/admin/coupons/new',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/coupons/new',
+    path: '/coupons/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminPackagesNewRoute =
   AuthenticatedAdminPackagesNewRouteImport.update({
-    id: '/admin_/packages/new',
-    path: '/admin/packages/new',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/packages/new',
+    path: '/packages/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminProductsNewRoute =
   AuthenticatedAdminProductsNewRouteImport.update({
-    id: '/admin_/products/new',
-    path: '/admin/products/new',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/products/new',
+    path: '/products/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -158,7 +158,7 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/wishlist': typeof AuthenticatedWishlistRoute
   '/packages/$slug': typeof PackagesSlugRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -181,7 +181,7 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/wishlist': typeof AuthenticatedWishlistRoute
   '/packages/$slug': typeof PackagesSlugRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -206,15 +206,15 @@ export interface FileRoutesById {
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/wishlist': typeof AuthenticatedWishlistRoute
   '/packages/$slug': typeof PackagesSlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/packages/': typeof PackagesIndexRoute
   '/_authenticated/invoice/$id': typeof AuthenticatedInvoiceIdRoute
-  '/_authenticated/admin_/coupons/new': typeof AuthenticatedAdminCouponsNewRoute
-  '/_authenticated/admin_/packages/new': typeof AuthenticatedAdminPackagesNewRoute
-  '/_authenticated/admin_/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/_authenticated/admin/coupons/new': typeof AuthenticatedAdminCouponsNewRoute
+  '/_authenticated/admin/packages/new': typeof AuthenticatedAdminPackagesNewRoute
+  '/_authenticated/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -284,9 +284,9 @@ export interface FileRouteTypes {
     | '/product/$slug'
     | '/packages/'
     | '/_authenticated/invoice/$id'
-    | '/_authenticated/admin_/coupons/new'
-    | '/_authenticated/admin_/packages/new'
-    | '/_authenticated/admin_/products/new'
+    | '/_authenticated/admin/coupons/new'
+    | '/_authenticated/admin/packages/new'
+    | '/_authenticated/admin/products/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -442,48 +442,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInvoiceIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin_/coupons/new': {
-      id: '/_authenticated/admin_/coupons/new'
-      path: '/admin/coupons/new'
+    '/_authenticated/admin/coupons/new': {
+      id: '/_authenticated/admin/coupons/new'
+      path: '/coupons/new'
       fullPath: '/admin/coupons/new'
       preLoaderRoute: typeof AuthenticatedAdminCouponsNewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin_/packages/new': {
-      id: '/_authenticated/admin_/packages/new'
-      path: '/admin/packages/new'
+    '/_authenticated/admin/packages/new': {
+      id: '/_authenticated/admin/packages/new'
+      path: '/packages/new'
       fullPath: '/admin/packages/new'
       preLoaderRoute: typeof AuthenticatedAdminPackagesNewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin_/products/new': {
-      id: '/_authenticated/admin_/products/new'
-      path: '/admin/products/new'
+    '/_authenticated/admin/products/new': {
+      id: '/_authenticated/admin/products/new'
+      path: '/products/new'
       fullPath: '/admin/products/new'
       preLoaderRoute: typeof AuthenticatedAdminProductsNewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
-  AuthenticatedWishlistRoute: typeof AuthenticatedWishlistRoute
-  AuthenticatedInvoiceIdRoute: typeof AuthenticatedInvoiceIdRoute
+interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCouponsNewRoute: typeof AuthenticatedAdminCouponsNewRoute
   AuthenticatedAdminPackagesNewRoute: typeof AuthenticatedAdminPackagesNewRoute
   AuthenticatedAdminProductsNewRoute: typeof AuthenticatedAdminProductsNewRoute
 }
 
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
-  AuthenticatedWishlistRoute: AuthenticatedWishlistRoute,
-  AuthenticatedInvoiceIdRoute: AuthenticatedInvoiceIdRoute,
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCouponsNewRoute: AuthenticatedAdminCouponsNewRoute,
   AuthenticatedAdminPackagesNewRoute: AuthenticatedAdminPackagesNewRoute,
   AuthenticatedAdminProductsNewRoute: AuthenticatedAdminProductsNewRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedWishlistRoute: typeof AuthenticatedWishlistRoute
+  AuthenticatedInvoiceIdRoute: typeof AuthenticatedInvoiceIdRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedWishlistRoute: AuthenticatedWishlistRoute,
+  AuthenticatedInvoiceIdRoute: AuthenticatedInvoiceIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

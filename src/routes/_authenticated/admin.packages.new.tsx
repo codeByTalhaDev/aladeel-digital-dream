@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 const aed = (n: number) => `AED ${Math.round(n).toLocaleString("en-AE")}`;
 
-export const Route = createFileRoute("/_authenticated/admin_/packages/new")({
+export const Route = createFileRoute("/_authenticated/admin/packages/new")({
   head: () => ({
     meta: [
       { title: "Add Package | Al Adeel Furniture" },
