@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export const Route = createFileRoute("/_authenticated/admin/coupons/new")({
+export const Route = createFileRoute("/_authenticated/admin_/coupons/new")({
   head: () => ({
     meta: [
       { title: "Add Coupon | Al Adeel Furniture" },
