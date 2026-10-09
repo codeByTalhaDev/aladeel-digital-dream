@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -181,28 +182,6 @@ export function CouponsPanel() {
       return data;
     },
   });
-  const [f, setF] = useState({ code: "", discount_type: "percent", value: "", min_order: "0", max_uses: "", expires_at: "" });
-
-  const add = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("coupons").insert({
-        code: f.code.trim().toUpperCase(),
-        discount_type: f.discount_type,
-        value: Number(f.value),
-        min_order: Number(f.min_order) || 0,
-        max_uses: f.max_uses ? Number(f.max_uses) : null,
-        expires_at: f.expires_at ? new Date(f.expires_at).toISOString() : null,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Coupon created");
-      setF({ code: "", discount_type: "percent", value: "", min_order: "0", max_uses: "", expires_at: "" });
-      qc.invalidateQueries({ queryKey: ["admin-coupons"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
   const toggle = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
       const { error } = await supabase.from("coupons").update({ is_active }).eq("id", id);
@@ -213,25 +192,9 @@ export function CouponsPanel() {
 
   return (
     <div className="space-y-6">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!f.code.trim() || !Number(f.value)) { toast.error("Code and value are required"); return; }
-          add.mutate();
-        }}
-        className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-3 lg:grid-cols-6"
-      >
-        <Input placeholder="CODE" value={f.code} onChange={(e) => setF({ ...f, code: e.target.value })} aria-label="Code" />
-        <select value={f.discount_type} onChange={(e) => setF({ ...f, discount_type: e.target.value })} className="h-10 rounded-md border border-input bg-background px-2 text-sm" aria-label="Type">
-          <option value="percent">% off</option>
-          <option value="fixed">AED off</option>
-        </select>
-        <Input type="number" placeholder="Value" value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} aria-label="Value" />
-        <Input type="number" placeholder="Min order AED" value={f.min_order} onChange={(e) => setF({ ...f, min_order: e.target.value })} aria-label="Minimum order" />
-        <Input type="number" placeholder="Max uses" value={f.max_uses} onChange={(e) => setF({ ...f, max_uses: e.target.value })} aria-label="Max uses" />
-        <Input type="date" value={f.expires_at} onChange={(e) => setF({ ...f, expires_at: e.target.value })} aria-label="Expires" />
-        <Button type="submit" className="sm:col-span-3 lg:col-span-6" disabled={add.isPending}>Create coupon</Button>
-      </form>
+      <Button asChild>
+        <Link to="/admin/coupons/new">Add coupon</Link>
+      </Button>
       <ul className="space-y-2">
         {coupons.map((c) => (
           <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 text-sm">
@@ -313,7 +276,9 @@ export function PackagesPanel({ products }: { products: Product[] }) {
 
   return (
     <div className="space-y-4">
-      <Button onClick={() => setD({ ...empty, items: {} })}>Add package</Button>
+      <Button asChild>
+        <Link to="/admin/packages/new">Add package</Link>
+      </Button>
       {d && (
         <form
           onSubmit={(e) => {
