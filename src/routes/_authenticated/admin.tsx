@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -215,7 +215,9 @@ function Admin() {
         </TabsContent>
 
         <TabsContent value="products" className="mt-6">
-          <Button onClick={() => setDraft({ ...emptyProduct })}>{t("addProduct")}</Button>
+          <Button asChild>
+            <Link to="/admin/products/new">{t("addProduct")}</Link>
+          </Button>
 
           {draft && (
             <form
