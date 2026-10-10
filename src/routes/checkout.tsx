@@ -3,8 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
-import { checkCoupon, placeOrder } from "@/lib/orders.functions";
-import { UAE_PHONE } from "@/lib/orders.functions";
+import { checkCoupon, placeOrder, UAE_PHONE } from "@/lib/orders.functions";
 import { BANK_DETAILS, BANK_TRANSFER_ENABLED } from "@/lib/bank";
 import { useCart } from "@/lib/cart";
 import { formatAed, useI18n } from "@/lib/i18n";
@@ -229,7 +228,7 @@ function Checkout() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={t("preferredDate")}>
-              <Input type="date" value={form.delivery_date} onChange={(e) => set("delivery_date", e.target.value)} />
+              <Input type="date" min={new Date(Date.now() + 4 * 3600_000).toISOString().slice(0, 10)} value={form.delivery_date} onChange={(e) => set("delivery_date", e.target.value)} />
             </Field>
             <Field label={t("timeSlot")}>
               <select
