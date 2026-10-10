@@ -7,7 +7,7 @@ import { useAuth, useIsAdmin } from "@/lib/useAuth";
 import { PHONE_PRIMARY } from "@/lib/shop";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function SiteHeader() {
@@ -59,6 +59,7 @@ export function SiteHeader() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-72">
+            <SheetTitle className="sr-only">Menu</SheetTitle>
             <nav className="mt-10 flex flex-col gap-1">
               {links.map((l) => (
                 <Link
