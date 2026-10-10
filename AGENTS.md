@@ -10,3 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Public catalog policies must separate anonymous active-item reads from authenticated admin reads, so visitor queries never invoke restricted role checks.
+- Orders are written only via the `place_order_atomic` Postgres function (service role) so stock, coupon use and order rows commit together.
+- Schema changes live only in drizzle/migrations; there is no supabase/migrations folder.
