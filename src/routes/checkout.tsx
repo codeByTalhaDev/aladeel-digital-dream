@@ -4,7 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 import { checkCoupon, placeOrder } from "@/lib/orders.functions";
-import { BANK_DETAILS } from "@/lib/bank";
+import { BANK_DETAILS, BANK_TRANSFER_ENABLED } from "@/lib/bank";
 import { useCart } from "@/lib/cart";
 import { formatAed, useI18n } from "@/lib/i18n";
 import { EMIRATES, totals } from "@/lib/shop";
@@ -259,6 +259,7 @@ function Checkout() {
                 />
                 {t("cod")}
               </label>
+              {BANK_TRANSFER_ENABLED && (
               <label
                 className={`flex items-center gap-2 rounded-md border p-3 ${
                   paymentMethod === "bank_transfer" ? "border-primary bg-secondary" : "border-border"
@@ -272,6 +273,7 @@ function Checkout() {
                 />
                 {t("bankTransfer")}
               </label>
+              )}
               {paymentMethod === "bank_transfer" && (
                 <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">{t("bankTransferNote")}</p>
               )}

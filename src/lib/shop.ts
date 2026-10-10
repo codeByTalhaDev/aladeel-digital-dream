@@ -63,10 +63,18 @@ export function totals(itemsTotal: number) {
   const delivery = itemsTotal === 0 || itemsTotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
   const grand = itemsTotal + delivery;
   const vat = Math.round((grand - grand / (1 + VAT_RATE)) * 100) / 100;
-  const subtotal = Math.round((grand - vat) * 100) / 100;
+  // subtotal (excl. VAT) + VAT + delivery must equal the grand total
+  const subtotal = Math.round((grand - vat - delivery) * 100) / 100;
   return { subtotal, vat, delivery, grand };
 }
 
 export function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+/** One availability rule for cards and the product page. Made-to-order items never run out. */
+export function isAvailable(p: { stock_status: string; stock_qty: number }) {
+  if (p.stock_status === "out_of_stock") return false;
+  if (p.stock_status === "made_to_order") return true;
+  return p.stock_qty > 0;
 }
