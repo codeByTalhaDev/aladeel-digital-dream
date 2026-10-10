@@ -547,6 +547,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      place_order_atomic: {
+        Args: { p_coupon: string; p_lines: Json; p_order: Json }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "staff" | "customer"
