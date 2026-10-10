@@ -4,6 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 import { checkCoupon, placeOrder } from "@/lib/orders.functions";
+import { UAE_PHONE } from "@/lib/orders.functions";
 import { BANK_DETAILS, BANK_TRANSFER_ENABLED } from "@/lib/bank";
 import { useCart } from "@/lib/cart";
 import { formatAed, useI18n } from "@/lib/i18n";
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/checkout")({
 
 const schema = z.object({
   customer_name: z.string().trim().min(2).max(100),
-  customer_phone: z.string().trim().min(7).max(20),
+  customer_phone: z.string().trim().max(20).refine((v) => UAE_PHONE.test(v.replace(/[\s-]/g, "")), "Enter a valid UAE phone number, e.g. 050 123 4567."),
   customer_email: z.string().trim().email().max(255).or(z.literal("")),
   emirate: z.string().trim().min(2),
   area: z.string().trim().min(2).max(100),

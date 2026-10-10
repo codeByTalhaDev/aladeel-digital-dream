@@ -1,7 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { totals } from "./shop";
+import { totals, EMIRATES } from "./shop";
+import { BANK_TRANSFER_ENABLED } from "./bank";
+
+export const UAE_PHONE = /^(?:\+?971|0)?5\d{8}$|^(?:\+?971|0)[2-9]\d{7}$/;
+function todayUae() {
+  return new Date(Date.now() + 4 * 3600_000).toISOString().slice(0, 10);
+}
 
 type Coupon = {
   code: string;
@@ -51,13 +57,13 @@ const orderSchema = z.object({
   coupon: z.string().trim().max(40).optional(),
   payment_method: z.enum(["cod", "bank_transfer"]).default("cod"),
   customer_name: z.string().trim().min(2).max(100),
-  customer_phone: z.string().trim().min(7).max(20),
+  customer_phone: z.string().trim().max(20).transform((v) => v.replace(/[\s-]/g, "")).refine((v) => UAE_PHONE.test(v), "Enter a valid UAE phone number."),
   customer_email: z.string().trim().email().max(255).or(z.literal("")),
-  emirate: z.string().trim().min(2).max(50),
+  emirate: z.string().refine((v) => EMIRATES.some((e) => e.value === v), "Choose an emirate."),
   area: z.string().trim().min(2).max(100),
   address: z.string().trim().min(5).max(300),
   landmark: z.string().trim().max(200),
-  delivery_date: z.string().max(20),
+  delivery_date: z.string().max(20).refine((v) => !v || (/^\d{4}-\d{2}-\d{2}$/.test(v) && v >= todayUae()), "Delivery date cannot be in the past."),
   delivery_slot: z.string().max(40),
   notes: z.string().trim().max(500),
 });
@@ -65,6 +71,7 @@ const orderSchema = z.object({
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => orderSchema.parse(d))
   .handler(async ({ data }) => {
+    if (data.payment_method === "bank_transfer" && !BANK_TRANSFER_ENABLED) throw new Error("Bank transfer is not available yet.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Optional signed-in customer
@@ -159,54 +166,39 @@ export const placeOrder = createServerFn({ method: "POST" })
       couponRow = c as Coupon;
     }
 
+    void couponRow;
+    void variantStock;
     const sums = totals(itemsTotal - discount);
-    const { data: order, error } = await supabaseAdmin
-      .from("orders")
-      .insert({
-        user_id: userId,
+    const { data: res, error } = await supabaseAdmin.rpc("place_order_atomic", {
+      p_order: {
+        user_id: userId ?? "",
         customer_name: data.customer_name,
         customer_phone: data.customer_phone,
-        customer_email: data.customer_email || null,
+        customer_email: data.customer_email || "",
         emirate: data.emirate,
         area: data.area,
         address: data.address,
-        landmark: data.landmark || null,
-        delivery_date: data.delivery_date || null,
-        delivery_slot: data.delivery_slot || null,
-        notes: data.notes || null,
+        landmark: data.landmark,
+        delivery_date: data.delivery_date,
+        delivery_slot: data.delivery_slot,
+        notes: data.notes,
         payment_method: data.payment_method,
-        coupon_code: couponCode,
         discount,
         subtotal: sums.subtotal,
         vat: sums.vat,
         delivery_fee: sums.delivery,
         total: sums.grand,
-      })
-      .select("id, order_number")
-      .single();
-    if (error || !order) {
+      },
+      p_lines: lines,
+      p_coupon: couponCode as string,
+    });
+    if (error || !res) {
       console.error(error);
+      const msg = error?.message ?? "";
+      if (msg.includes("OUT_OF_STOCK:")) throw new Error(`Not enough stock left for ${msg.split("OUT_OF_STOCK:")[1]?.trim()}.`);
+      if (msg.includes("COUPON_INVALID")) throw new Error("Coupon cannot be applied to this order.");
       throw new Error("Could not place order. Please try again.");
     }
-
-    const { error: itemsErr } = await supabaseAdmin
-      .from("order_items")
-      .insert(lines.map((l) => ({ ...l, order_id: order.id })));
-    if (itemsErr) {
-      console.error(itemsErr);
-      await supabaseAdmin.from("orders").delete().eq("id", order.id);
-      throw new Error("Could not place order. Please try again.");
-    }
-
-    for (const v of variantStock) {
-      await supabaseAdmin.from("product_variants").update({ stock_qty: v.newQty }).eq("id", v.id);
-    }
-    if (couponRow && couponCode) {
-      await supabaseAdmin
-        .from("coupons")
-        .update({ used_count: couponRow.used_count + 1 })
-        .eq("code", couponCode);
-    }
-
-    return { id: order.id as string, orderNumber: Number(order.order_number) };
+    const r = res as { id: string; order_number: number };
+    return { id: r.id, orderNumber: Number(r.order_number) };
   });
