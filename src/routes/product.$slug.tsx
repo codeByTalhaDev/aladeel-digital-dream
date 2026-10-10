@@ -1,3 +1,4 @@
+import { isAvailable } from "@/lib/shop";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -101,7 +102,7 @@ function ProductPage() {
   const variant = variants.find((v) => v.id === variantId) ?? null;
   const needsVariant = variants.length > 0 && !variant;
   const price = variant ? Number(variant.price) : Number(product.price);
-  const soldOut = product.stock_status === "out_of_stock" || (variant ? variant.stock_qty <= 0 : false);
+  const soldOut = variant ? product.stock_status === "out_of_stock" || variant.stock_qty <= 0 : !isAvailable(product);
   const avg = reviews.length ? reviews.reduce((n, r) => n + r.rating, 0) / reviews.length : 0;
   const groups = Array.from(new Set(variants.map((v) => v.option_type)));
 

@@ -70,7 +70,7 @@ function Invoice() {
             <p className="font-semibold">Deliver to · التوصيل</p>
             <p>{data.address}</p>
             <p>{data.area}, {data.emirate}</p>
-            <p>Payment: {data.payment_method === "cod" ? "Cash on Delivery" : data.payment_method}</p>
+            <p>Payment: {data.payment_method === "cod" ? "Cash on Delivery" : data.payment_method === "bank_transfer" ? "Bank Transfer" : data.payment_method}</p>
           </div>
         </div>
 
@@ -100,7 +100,7 @@ function Invoice() {
         <div className="ms-auto mt-4 max-w-xs space-y-1">
           {Number(data.discount) > 0 && <Row l={`Discount (${data.coupon_code})`} v={`-${aed(data.discount)}`} />}
           <Row l="Delivery" v={aed(data.delivery_fee)} />
-          <Row l="Total excl. VAT" v={aed(data.subtotal)} />
+          <Row l="Items excl. VAT" v={aed(data.subtotal)} />
           <Row l="VAT 5% · ضريبة القيمة المضافة" v={aed(data.vat)} />
           <div className="border-t-2 border-primary pt-1">
             <Row l="Total incl. VAT · الإجمالي" v={aed(data.total)} bold />

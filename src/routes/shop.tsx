@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import type { Category, Product } from "@/lib/shop";
@@ -81,8 +81,19 @@ function Shop() {
     return out;
   }, [products, categoryId, maxPrice, search.sort, search.q]);
 
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [liveMax, setLiveMax] = useState<number | null>(null);
+  function updateLater(next: Record<string, string | number | undefined>) {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      update(next);
+      setLiveMax(null);
+    }, 300);
+  }
+
   function update(next: Record<string, string | number | undefined>) {
     navigate({
+      replace: true,
       search: (prev) => {
         const merged: Record<string, string | number> = { ...prev };
         for (const [k, v] of Object.entries(next)) {
@@ -103,7 +114,7 @@ function Shop() {
         <Input
           type="search"
           defaultValue={search.q ?? ""}
-          onChange={(e) => update({ q: e.target.value || undefined })}
+          onChange={(e) => updateLater({ q: e.target.value || undefined })}
           placeholder={pick("Search products by name…", "ابحث عن المنتجات بالاسم…")}
           aria-label={pick("Search products", "بحث المنتجات")}
           className="ps-9"
@@ -140,11 +151,14 @@ function Shop() {
               {t("maxPrice")}: {new Intl.NumberFormat(lang === "ar" ? "ar-AE" : "en-AE").format(maxPrice)} AED
             </Label>
             <Slider
-              value={[maxPrice]}
+              value={[liveMax ?? maxPrice]}
               min={500}
               max={20000}
               step={500}
-              onValueChange={(v) => update({ max: v[0] })}
+              onValueChange={(v) => {
+                setLiveMax(v[0] ?? null);
+                updateLater({ max: v[0] });
+              }}
             />
           </div>
 

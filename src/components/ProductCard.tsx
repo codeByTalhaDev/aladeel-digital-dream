@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { formatAed, useI18n } from "@/lib/i18n";
-import type { Product } from "@/lib/shop";
+import { isAvailable, type Product } from "@/lib/shop";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/WishlistButton";
 import { ShoppingBag } from "lucide-react";
@@ -15,7 +15,7 @@ export function ProductCard({ product }: { product: Product }) {
     product.compare_at_price && product.compare_at_price > product.price
       ? Math.round((1 - product.price / product.compare_at_price) * 100)
       : null;
-  const unavailable = product.stock_status === "out_of_stock" || product.stock_qty <= 0;
+  const unavailable = !isAvailable(product);
 
   return (
     <article className="card-product group flex flex-col">

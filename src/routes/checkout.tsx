@@ -3,8 +3,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
-import { checkCoupon, placeOrder } from "@/lib/orders.functions";
-import { BANK_DETAILS } from "@/lib/bank";
+import { checkCoupon, placeOrder, UAE_PHONE } from "@/lib/orders.functions";
+import { BANK_DETAILS, BANK_TRANSFER_ENABLED } from "@/lib/bank";
 import { useCart } from "@/lib/cart";
 import { formatAed, useI18n } from "@/lib/i18n";
 import { EMIRATES, totals } from "@/lib/shop";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/checkout")({
 
 const schema = z.object({
   customer_name: z.string().trim().min(2).max(100),
-  customer_phone: z.string().trim().min(7).max(20),
+  customer_phone: z.string().trim().max(20).refine((v) => UAE_PHONE.test(v.replace(/[\s-]/g, "")), "Enter a valid UAE phone number, e.g. 050 123 4567."),
   customer_email: z.string().trim().email().max(255).or(z.literal("")),
   emirate: z.string().trim().min(2),
   area: z.string().trim().min(2).max(100),
@@ -228,7 +228,7 @@ function Checkout() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={t("preferredDate")}>
-              <Input type="date" value={form.delivery_date} onChange={(e) => set("delivery_date", e.target.value)} />
+              <Input type="date" min={new Date(Date.now() + 4 * 3600_000).toISOString().slice(0, 10)} value={form.delivery_date} onChange={(e) => set("delivery_date", e.target.value)} />
             </Field>
             <Field label={t("timeSlot")}>
               <select
@@ -259,6 +259,7 @@ function Checkout() {
                 />
                 {t("cod")}
               </label>
+              {BANK_TRANSFER_ENABLED && (
               <label
                 className={`flex items-center gap-2 rounded-md border p-3 ${
                   paymentMethod === "bank_transfer" ? "border-primary bg-secondary" : "border-border"
@@ -272,6 +273,7 @@ function Checkout() {
                 />
                 {t("bankTransfer")}
               </label>
+              )}
               {paymentMethod === "bank_transfer" && (
                 <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">{t("bankTransferNote")}</p>
               )}

@@ -8,3 +8,6 @@ export const BANK_DETAILS = {
   iban: "AE00 0000 0000 0000 0000 000",
   swift: "XXXXAEAD",
 } as const;
+
+/** Bank transfer stays hidden until real account details are added above. */
+export const BANK_TRANSFER_ENABLED = false;

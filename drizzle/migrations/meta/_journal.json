@@ -29,6 +29,13 @@
       "when": 1791099655712,
       "tag": "0003_fix_public_catalog_role_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791613410598,
+      "tag": "0004_atomic_place_order",
+      "breakpoints": true
     }
   ]
 }
