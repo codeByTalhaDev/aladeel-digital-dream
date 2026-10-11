@@ -43,6 +43,13 @@
       "when": 1791693631417,
       "tag": "0005_create_site_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791693835763,
+      "tag": "0006_staff_roles_restock_and_image_storage",
+      "breakpoints": true
     }
   ]
 }
