@@ -353,7 +353,7 @@ function Field({ label, children }: { label: string; children: React.ReactElemen
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id}>{label}</Label>
-      {cloneElement(children, { id })}
+      {cloneElement(children as React.ReactElement<{ id?: string }>, { id })}
     </div>
   );
 }
