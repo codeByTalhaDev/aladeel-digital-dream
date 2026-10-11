@@ -491,6 +491,27 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value_ar: string
+          value_en: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value_ar?: string
+          value_en?: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value_ar?: string
+          value_en?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
