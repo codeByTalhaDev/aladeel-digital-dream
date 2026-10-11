@@ -170,12 +170,19 @@ type Ctx = {
 const g = globalThis as unknown as { __alAdeelI18nCtx?: React.Context<Ctx | null> };
 const I18nContext = g.__alAdeelI18nCtx ?? (g.__alAdeelI18nCtx = createContext<Ctx | null>(null));
 
+function readStoredLang(): Lang | null {
+  const stored = window.localStorage.getItem("aladeel-lang");
+  if (stored === "ar" || stored === "en") return stored;
+  const cookie = document.cookie.match(/(?:^|;\s*)aladeel-lang=(ar|en)(?:;|$)/);
+  return cookie ? (cookie[1] as Lang) : null;
+}
+
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("aladeel-lang");
-    if (stored === "ar" || stored === "en") setLangState(stored);
+    const stored = readStoredLang();
+    if (stored) setLangState(stored);
   }, []);
 
   useEffect(() => {
@@ -186,6 +193,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
     window.localStorage.setItem("aladeel-lang", next);
+    // Cookie mirrors the choice so the server can render the right language/direction.
+    document.cookie = `aladeel-lang=${next}; path=/; max-age=31536000; samesite=lax`;
   }, []);
 
   const value = useMemo<Ctx>(

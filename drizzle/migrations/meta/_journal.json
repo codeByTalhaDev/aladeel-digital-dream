@@ -36,6 +36,13 @@
       "when": 1791613410598,
       "tag": "0004_atomic_place_order",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791693631417,
+      "tag": "0005_create_site_settings",
+      "breakpoints": true
     }
   ]
 }

@@ -124,18 +124,19 @@ function AuthPage() {
           {mode === "signup" && (
             <>
               <div className="space-y-1.5">
-                <Label>{t("fullName")}</Label>
-                <Input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
+                <Label htmlFor="auth-fullName">{t("fullName")}</Label>
+                <Input id="auth-fullName" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
               </div>
               <div className="space-y-1.5">
-                <Label>{t("phone")}</Label>
-                <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                <Label htmlFor="auth-phone">{t("phone")}</Label>
+                <Input id="auth-phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               </div>
             </>
           )}
           <div className="space-y-1.5">
-            <Label>{t("email")}</Label>
+            <Label htmlFor="auth-email">{t("email")}</Label>
             <Input
+              id="auth-email"
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -144,8 +145,9 @@ function AuthPage() {
           </div>
           {mode !== "forgot" && (
             <div className="space-y-1.5">
-              <Label>{t("password")}</Label>
+              <Label htmlFor="auth-password">{t("password")}</Label>
               <Input
+                id="auth-password"
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
