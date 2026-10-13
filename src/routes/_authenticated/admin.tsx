@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnalyticsPanel, CouponsPanel, PackagesPanel, PagesPanel, VariantsEditor } from "@/components/admin/AdminExtras";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 type OrderRow = {
   id: string;
@@ -64,7 +65,8 @@ const emptyProduct = {
 function Admin() {
   const { t, lang, pick } = useI18n();
   const { user } = useAuth();
-  const { isAdmin, checked } = useIsAdmin(user?.id);
+  const { isAdmin, isStaff, checked } = useIsAdmin(user?.id);
+  const canAccess = isAdmin || isStaff;
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<typeof emptyProduct | null>(null);
 
@@ -89,7 +91,7 @@ function Admin() {
 
   const { data: orders } = useQuery({
     queryKey: ["admin-orders"],
-    enabled: isAdmin,
+    enabled: canAccess,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
@@ -163,7 +165,7 @@ function Admin() {
   });
 
   if (!checked) return <div className="container-page py-20 text-muted-foreground">{t("loading")}</div>;
-  if (!isAdmin) return <div className="container-page py-20">{t("adminOnly")}</div>;
+  if (!canAccess) return <div className="container-page py-20">{t("adminOnly")}</div>;
 
   return (
     <div className="container-page py-12">
