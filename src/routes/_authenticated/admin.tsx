@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnalyticsPanel, CouponsPanel, PackagesPanel, PagesPanel, VariantsEditor } from "@/components/admin/AdminExtras";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 type OrderRow = {
   id: string;
@@ -64,7 +65,8 @@ const emptyProduct = {
 function Admin() {
   const { t, lang, pick } = useI18n();
   const { user } = useAuth();
-  const { isAdmin, checked } = useIsAdmin(user?.id);
+  const { isAdmin, isStaff, checked } = useIsAdmin(user?.id);
+  const canAccess = isAdmin || isStaff;
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<typeof emptyProduct | null>(null);
 
@@ -89,7 +91,7 @@ function Admin() {
 
   const { data: orders } = useQuery({
     queryKey: ["admin-orders"],
-    enabled: isAdmin,
+    enabled: canAccess,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
@@ -163,20 +165,24 @@ function Admin() {
   });
 
   if (!checked) return <div className="container-page py-20 text-muted-foreground">{t("loading")}</div>;
-  if (!isAdmin) return <div className="container-page py-20">{t("adminOnly")}</div>;
+  if (!canAccess) return <div className="container-page py-20">{t("adminOnly")}</div>;
 
   return (
     <div className="container-page py-12">
       <h1 className="heading-section mb-8">{t("admin")}</h1>
 
-      <AnalyticsPanel />
+      {isAdmin && <AnalyticsPanel />}
       <Tabs defaultValue="orders">
         <TabsList className="flex h-auto flex-wrap">
           <TabsTrigger value="orders">{t("orders")}</TabsTrigger>
-          <TabsTrigger value="products">{t("products")}</TabsTrigger>
-          <TabsTrigger value="packages">Packages</TabsTrigger>
-          <TabsTrigger value="coupons">Coupons</TabsTrigger>
-          <TabsTrigger value="pages">Policy pages</TabsTrigger>
+          {isAdmin && (
+            <>
+              <TabsTrigger value="products">{t("products")}</TabsTrigger>
+              <TabsTrigger value="packages">Packages</TabsTrigger>
+              <TabsTrigger value="coupons">Coupons</TabsTrigger>
+              <TabsTrigger value="pages">Policy pages</TabsTrigger>
+            </>
+          )}
         </TabsList>
 
         <TabsContent value="orders" className="mt-6 space-y-3">
@@ -186,7 +192,10 @@ function Admin() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-medium">
-                    #{o.order_number} · {o.customer_name}
+                    <Link to="/admin/orders/$id" params={{ id: o.id }} className="underline-offset-4 hover:underline">
+                      #{o.order_number}
+                    </Link>{" "}
+                    · {o.customer_name}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {o.customer_phone} · {o.emirate}, {o.area} · {o.address}
@@ -315,6 +324,11 @@ function Admin() {
               <F label="Image URLs (comma separated)">
                 <Input value={draft.images} onChange={(e) => setDraft({ ...draft, images: e.target.value })} />
               </F>
+              <F label="Add a photo">
+                <ImageUpload
+                  onUploaded={(url) => setDraft({ ...draft, images: draft.images ? `${draft.images}, ${url}` : url })}
+                />
+              </F>
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -394,7 +408,13 @@ function Admin() {
                   >
                     {t("editProduct")}
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => deleteProduct.mutate(p.id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (window.confirm(`Delete "${p.name_en}"? This cannot be undone.`)) deleteProduct.mutate(p.id);
+                    }}
+                  >
                     {t("delete")}
                   </Button>
                 </div>

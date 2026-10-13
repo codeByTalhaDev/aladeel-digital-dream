@@ -7,6 +7,7 @@ type AuthCtx = {
   user: User | null;
   ready: boolean;
   isAdmin: boolean;
+  isStaff: boolean;
   adminChecked: boolean;
 };
 
@@ -17,7 +18,7 @@ const AuthContext = g.__alAdeelAuthCtx ?? (g.__alAdeelAuthCtx = createContext<Au
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [roles, setRoles] = useState<string[]>([]);
   const [adminChecked, setAdminChecked] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     if (!userId) {
-      setIsAdmin(false);
+      setRoles([]);
       setAdminChecked(true);
       return;
     }
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq("user_id", userId)
       .then(({ data }) => {
         if (!active) return;
-        setIsAdmin(Boolean(data?.some((r) => r.role === "admin")));
+        setRoles((data ?? []).map((r) => r.role));
         setAdminChecked(true);
       });
     return () => {
@@ -57,8 +58,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [userId]);
 
   const value = useMemo<AuthCtx>(
-    () => ({ session, user: session?.user ?? null, ready, isAdmin, adminChecked }),
-    [session, ready, isAdmin, adminChecked],
+    () => ({
+      session,
+      user: session?.user ?? null,
+      ready,
+      isAdmin: roles.includes("admin"),
+      isStaff: roles.includes("staff"),
+      adminChecked,
+    }),
+    [session, ready, roles, adminChecked],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -76,6 +84,6 @@ export function useAuth() {
 }
 
 export function useIsAdmin(_userId?: string) {
-  const { isAdmin, adminChecked } = useAuthCtx();
-  return { isAdmin, checked: adminChecked };
+  const { isAdmin, isStaff, adminChecked } = useAuthCtx();
+  return { isAdmin, isStaff, checked: adminChecked };
 }

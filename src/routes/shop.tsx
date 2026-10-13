@@ -70,6 +70,7 @@ function Shop() {
 
   const categoryId = categories?.find((c) => c.slug === search.category)?.id;
   const maxPrice = search.max ?? 20000;
+  const [visible, setVisible] = useState(12);
 
   const list = useMemo(() => {
     let out = (products ?? []).filter((p) => Number(p.price) <= maxPrice);
@@ -80,6 +81,15 @@ function Shop() {
     if (search.sort === "price_desc") out = [...out].sort((a, b) => Number(b.price) - Number(a.price));
     return out;
   }, [products, categoryId, maxPrice, search.sort, search.q]);
+
+  // Reset pagination whenever the filters change.
+  const filterKey = `${search.category}|${search.sort}|${search.max}|${search.q}`;
+  const [lastKey, setLastKey] = useState(filterKey);
+  if (filterKey !== lastKey) {
+    setLastKey(filterKey);
+    setVisible(12);
+  }
+  const shown = list.slice(0, visible);
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [liveMax, setLiveMax] = useState<number | null>(null);
@@ -190,11 +200,20 @@ function Shop() {
               {t("noProducts")}
             </div>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {list.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {shown.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+              {list.length > visible && (
+                <div className="mt-8 text-center">
+                  <Button variant="secondary" onClick={() => setVisible((v) => v + 12)}>
+                    {pick("Show more products", "عرض المزيد من المنتجات")} ({list.length - visible} {pick("left", "متبقية")})
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
