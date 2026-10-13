@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/_authenticated/admin_/products/new")({
   head: () => ({
@@ -168,6 +169,11 @@ function AddProduct() {
         </F>
         <F label="Image URLs (comma separated)">
           <Input value={draft.images} onChange={(e) => setDraft({ ...draft, images: e.target.value })} />
+        </F>
+        <F label="Add a photo">
+          <ImageUpload
+            onUploaded={(url) => setDraft({ ...draft, images: draft.images ? `${draft.images}, ${url}` : url })}
+          />
         </F>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={draft.is_featured} onChange={(e) => setDraft({ ...draft, is_featured: e.target.checked })} />
