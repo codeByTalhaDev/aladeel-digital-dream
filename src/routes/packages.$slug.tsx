@@ -7,16 +7,33 @@ import { useCart } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/packages/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug.replace(/-/g, " ")} package | Al Adeel Furniture UAE` },
-      { name: "description", content: "A discounted furniture room set from Al Adeel Furniture, delivered and assembled across the UAE." },
-      { property: "og:title", content: `${params.slug.replace(/-/g, " ")} | Al Adeel Furniture` },
-      { property: "og:description", content: "Discounted room set delivered across the UAE." },
-      { property: "og:type", content: "product" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase.from("packages").select("name_en, description_en, image_url, price").eq("slug", params.slug).maybeSingle();
+    return { seo: data as { name_en: string; description_en: string | null; images?: string[] | null; image_url?: string | null; price: number } | null };
+  },
+  head: ({ params, loaderData }) => {
+    const d = loaderData?.seo;
+    const name = d?.name_en ?? params.slug.replace(/-/g, " ");
+    const title = `${name} | Al Adeel Furniture UAE`;
+    const desc = (d?.description_en || `${name} from Al Adeel Furniture — delivered and assembled across the UAE. Prices in AED incl. VAT.`).slice(0, 160);
+    const raw = d?.images?.[0] ?? d?.image_url ?? null;
+    const img = raw ? (raw.startsWith("http") ? raw : `https://aladeel-digital-dream.lovable.app${raw.startsWith("/") ? "" : "/"}${raw}`) : null;
+    const url = `https://aladeel-digital-dream.lovable.app/packages/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: d ? [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Product", name, description: desc, ...(img ? { image: img } : {}), brand: { "@type": "Brand", name: "Al Adeel Furniture" }, offers: { "@type": "Offer", price: d.price, priceCurrency: "AED", availability: "https://schema.org/InStock", url } }) }] : [],
+    };
+  },
   component: PackagePage,
 });
 
