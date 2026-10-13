@@ -7,6 +7,7 @@ import type { Product } from "@/lib/shop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 const aed = (n: number) => `AED ${Math.round(n).toLocaleString("en-AE")}`;
 
@@ -289,7 +290,10 @@ export function PackagesPanel({ products }: { products: Product[] }) {
           className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-2"
         >
           <Input placeholder="slug (e.g. living-room-set)" value={d.slug} onChange={(e) => setD({ ...d, slug: e.target.value })} />
-          <Input placeholder="Image URL" value={d.image_url} onChange={(e) => setD({ ...d, image_url: e.target.value })} />
+          <div className="space-y-2">
+            <Input placeholder="Image URL" value={d.image_url} onChange={(e) => setD({ ...d, image_url: e.target.value })} />
+            <ImageUpload onUploaded={(url) => setD({ ...d, image_url: url })} />
+          </div>
           <Input placeholder="Name (English)" value={d.name_en} onChange={(e) => setD({ ...d, name_en: e.target.value })} />
           <Input placeholder="الاسم (عربي)" value={d.name_ar} onChange={(e) => setD({ ...d, name_ar: e.target.value })} />
           <Textarea placeholder="Description (English)" value={d.description_en} onChange={(e) => setD({ ...d, description_en: e.target.value })} />
