@@ -14,19 +14,33 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { Reviews, Stars, useReviews } from "@/components/Reviews";
 
 export const Route = createFileRoute("/product/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug.replace(/-/g, " ")} | Al Adeel Furniture` },
-      {
-        name: "description",
-        content: "Buy furniture in the UAE from Al Adeel Furniture — delivery to Sharjah, Dubai & Ras Al Khaimah. Prices in AED including 5% VAT, delivery and assembly across the UAE.",
-      },
-      { property: "og:title", content: `${params.slug.replace(/-/g, " ")} | Al Adeel Furniture` },
-      { property: "og:description", content: "Delivered and assembled across the UAE. Cash on delivery available." },
-      { property: "og:type", content: "product" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase.from("products").select("name_en, description_en, images, price").eq("slug", params.slug).maybeSingle();
+    return { seo: data as { name_en: string; description_en: string | null; images?: string[] | null; image_url?: string | null; price: number } | null };
+  },
+  head: ({ params, loaderData }) => {
+    const d = loaderData?.seo;
+    const name = d?.name_en ?? params.slug.replace(/-/g, " ");
+    const title = `${name} | Al Adeel Furniture UAE`;
+    const desc = (d?.description_en || `${name} from Al Adeel Furniture — delivered and assembled across the UAE. Prices in AED incl. VAT.`).slice(0, 160);
+    const raw = d?.images?.[0] ?? d?.image_url ?? null;
+    const img = raw ? (raw.startsWith("http") ? raw : `https://aladeel-digital-dream.lovable.app${raw.startsWith("/") ? "" : "/"}${raw}`) : null;
+    const url = `https://aladeel-digital-dream.lovable.app/product/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: d ? [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Product", name, description: desc, ...(img ? { image: img } : {}), brand: { "@type": "Brand", name: "Al Adeel Furniture" }, offers: { "@type": "Offer", price: d.price, priceCurrency: "AED", availability: "https://schema.org/InStock", url } }) }] : [],
+    };
+  },
   component: ProductPage,
 });
 

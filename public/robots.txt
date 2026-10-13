@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://aladeel-digital-dream.lovable.app/sitemap.xml
