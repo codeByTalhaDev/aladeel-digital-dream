@@ -426,12 +426,46 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_requests: {
+        Row: {
+          created_at: string
+          details: string
+          email: string | null
+          emirate: string | null
+          id: string
+          name: string
+          phone: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details: string
+          email?: string | null
+          emirate?: string | null
+          id?: string
+          name: string
+          phone: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          email?: string | null
+          emirate?: string | null
+          id?: string
+          name?: string
+          phone?: string
+          status?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           author_name: string
           comment: string | null
           created_at: string
           id: string
+          is_approved: boolean
           product_id: string
           rating: number
           user_id: string
@@ -441,6 +475,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          is_approved?: boolean
           product_id: string
           rating: number
           user_id: string
@@ -450,6 +485,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          is_approved?: boolean
           product_id?: string
           rating?: number
           user_id?: string
