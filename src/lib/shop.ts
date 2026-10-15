@@ -59,8 +59,24 @@ export type Category = {
 };
 
 /** Displayed prices are VAT-inclusive, so split the VAT back out of the total. */
-export function totals(itemsTotal: number) {
-  const delivery = itemsTotal === 0 || itemsTotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+/** Delivery fee per emirate (AED), used below the free-delivery threshold. */
+export const DELIVERY_BY_EMIRATE: Record<string, number> = {
+  "Ras Al Khaimah": 100,
+  "Umm Al Quwain": 120,
+  Ajman: 130,
+  Sharjah: 150,
+  Dubai: 150,
+  Fujairah: 180,
+  "Abu Dhabi": 250,
+};
+
+export function deliveryFee(itemsTotal: number, emirate?: string) {
+  if (itemsTotal === 0 || itemsTotal >= FREE_DELIVERY_THRESHOLD) return 0;
+  return (emirate && DELIVERY_BY_EMIRATE[emirate]) ?? DELIVERY_FEE;
+}
+
+export function totals(itemsTotal: number, emirate?: string) {
+  const delivery = deliveryFee(itemsTotal, emirate);
   const grand = itemsTotal + delivery;
   const vat = Math.round((grand - grand / (1 + VAT_RATE)) * 100) / 100;
   // subtotal (excl. VAT) + VAT + delivery must equal the grand total

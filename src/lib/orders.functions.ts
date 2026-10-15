@@ -168,7 +168,7 @@ export const placeOrder = createServerFn({ method: "POST" })
 
     void couponRow;
     void variantStock;
-    const sums = totals(itemsTotal - discount);
+    const sums = totals(itemsTotal - discount, data.emirate);
     const { data: res, error } = await supabaseAdmin.rpc("place_order_atomic", {
       p_order: {
         user_id: userId ?? "",
@@ -201,4 +201,28 @@ export const placeOrder = createServerFn({ method: "POST" })
     }
     const r = res as { id: string; order_number: number };
     return { id: r.id, orderNumber: Number(r.order_number) };
+  });
+
+export const trackOrder = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ orderNumber: z.number().int().positive(), phone: z.string().trim().max(20).transform((v) => v.replace(/[\s-]/g, "")) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: o } = await supabaseAdmin
+      .from("orders")
+      .select("order_number, customer_phone, status, payment_status, total, delivery_date, created_at")
+      .eq("order_number", data.orderNumber)
+      .maybeSingle();
+    const digits = (v: string) => v.replace(/\D/g, "").slice(-9);
+    if (!o || digits(o.customer_phone) !== digits(data.phone)) return { found: false as const };
+    return {
+      found: true as const,
+      orderNumber: Number(o.order_number),
+      status: o.status,
+      paymentStatus: o.payment_status,
+      total: Number(o.total),
+      deliveryDate: o.delivery_date,
+      createdAt: o.created_at,
+    };
   });

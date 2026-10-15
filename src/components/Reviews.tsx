@@ -27,7 +27,7 @@ export function useReviews(productId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reviews")
-        .select("id, user_id, author_name, rating, comment, created_at")
+        .select("id, user_id, author_name, rating, comment, created_at, is_approved")
         .eq("product_id", productId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -40,10 +40,11 @@ export function Reviews({ productId }: { productId: string }) {
   const { pick, lang } = useI18n();
   const { user } = useAuth();
   const qc = useQueryClient();
-  const { data: reviews = [] } = useReviews(productId);
+  const { data: all = [] } = useReviews(productId);
+  const reviews = all.filter((r) => r.is_approved);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
-  const mine = reviews.find((r) => r.user_id === user?.id);
+  const mine = all.find((r) => r.user_id === user?.id);
 
   const submit = useMutation({
     mutationFn: async () => {
@@ -56,7 +57,7 @@ export function Reviews({ productId }: { productId: string }) {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success(pick("Thanks for your review", "شكراً لتقييمك"));
+      toast.success(pick("Thanks! Your review will show after approval.", "شكراً! سيظهر تقييمك بعد الموافقة."));
       setComment("");
       qc.invalidateQueries({ queryKey: ["reviews", productId] });
     },
@@ -101,6 +102,9 @@ export function Reviews({ productId }: { productId: string }) {
               }}
               className="space-y-3"
             >
+              {mine && !mine.is_approved && (
+                <p className="text-xs text-muted-foreground">{pick("Your review is waiting for approval.", "تقييمك بانتظار الموافقة.")}</p>
+              )}
               <p className="font-medium">{mine ? pick("Update your review", "عدّل تقييمك") : pick("Write a review", "اكتب تقييماً")}</p>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((n) => (

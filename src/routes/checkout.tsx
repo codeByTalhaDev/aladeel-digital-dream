@@ -51,7 +51,7 @@ function Checkout() {
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
   const discount = coupon ? Math.min(coupon.discount, itemsTotal) : 0;
-  const sums = totals(itemsTotal - discount);
+  const sums = totals(itemsTotal - discount, form.emirate);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<number | null>(null);
