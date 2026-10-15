@@ -23,5 +23,5 @@
 - [x] Phase 2: single AuthProvider, site-settings table, i18n cleanup + language cookie, form label accessibility
 - [x] Phase 3: admin image upload, order detail + payment status, pagination, restock on cancel, delete confirm, staff role
 - [x] Phase 4: SEO loaders, real titles, og:image, JSON-LD, sitemap, robots
-- [ ] Phase 5: quote requests, delivery by emirate, guest order tracking, WhatsApp summary, review moderation
+- [x] Phase 5: quote requests, delivery by emirate, guest order tracking, WhatsApp summary, review moderation
 - [ ] Phase 6: Turnstile/rate limit, analytics pixels — needs keys from owner; real content/legal text — needs owner; Tabby — needs merchant account

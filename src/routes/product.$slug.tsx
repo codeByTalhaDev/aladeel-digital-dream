@@ -92,7 +92,8 @@ function ProductPage() {
       return data;
     },
   });
-  const { data: reviews = [] } = useReviews(product?.id);
+  const { data: allReviews = [] } = useReviews(product?.id);
+  const reviews = allReviews.filter((r) => r.is_approved);
 
   if (isLoading) return <div className="container-page py-20 text-muted-foreground">{t("loading")}</div>;
   if (!product)

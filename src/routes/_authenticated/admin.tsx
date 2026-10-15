@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnalyticsPanel, CouponsPanel, PackagesPanel, PagesPanel, VariantsEditor } from "@/components/admin/AdminExtras";
+import { QuotesPanel, ReviewsPanel } from "@/components/admin/InboxPanels";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 
 type OrderRow = {
@@ -175,11 +176,13 @@ function Admin() {
       <Tabs defaultValue="orders">
         <TabsList className="flex h-auto flex-wrap">
           <TabsTrigger value="orders">{t("orders")}</TabsTrigger>
+          <TabsTrigger value="quotes">Quotes</TabsTrigger>
           {isAdmin && (
             <>
               <TabsTrigger value="products">{t("products")}</TabsTrigger>
               <TabsTrigger value="packages">Packages</TabsTrigger>
               <TabsTrigger value="coupons">Coupons</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
               <TabsTrigger value="pages">Policy pages</TabsTrigger>
             </>
           )}
@@ -425,6 +428,8 @@ function Admin() {
         <TabsContent value="packages" className="mt-6"><PackagesPanel products={products ?? []} /></TabsContent>
         <TabsContent value="coupons" className="mt-6"><CouponsPanel /></TabsContent>
         <TabsContent value="pages" className="mt-6"><PagesPanel /></TabsContent>
+        <TabsContent value="quotes" className="mt-6"><QuotesPanel /></TabsContent>
+        <TabsContent value="reviews" className="mt-6"><ReviewsPanel /></TabsContent>
       </Tabs>
     </div>
   );

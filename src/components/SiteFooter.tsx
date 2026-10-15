@@ -62,6 +62,12 @@ export function SiteFooter() {
               <Link to="/terms" className="hover:text-primary">Terms &amp; Conditions</Link>
             </li>
             <li>
+              <Link to="/track" className="hover:text-primary">Track order</Link>
+            </li>
+            <li>
+              <Link to="/quote" className="hover:text-primary">Request a quote</Link>
+            </li>
+            <li>
               <Link to="/contact" className="hover:text-primary">
                 {t("contact")}
               </Link>
