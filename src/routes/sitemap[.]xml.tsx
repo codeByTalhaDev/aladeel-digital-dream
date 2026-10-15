@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 const SITE = "https://aladeel-digital-dream.lovable.app";
-const STATIC = ["/", "/shop", "/packages", "/about", "/contact", "/privacy", "/terms", "/returns"];
+const STATIC = ["/", "/shop", "/packages", "/about", "/contact", "/privacy", "/terms", "/returns", "/quote", "/track"];
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
