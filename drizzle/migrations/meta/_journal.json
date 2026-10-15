@@ -57,6 +57,13 @@
       "when": 1792074153492,
       "tag": "0007_reviews_moderation_and_quotes",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792074172211,
+      "tag": "0008_reviews_force_pending",
+      "breakpoints": true
     }
   ]
 }
