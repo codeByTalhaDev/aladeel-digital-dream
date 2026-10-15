@@ -7,7 +7,7 @@ import { checkCoupon, placeOrder, UAE_PHONE } from "@/lib/orders.functions";
 import { BANK_DETAILS, BANK_TRANSFER_ENABLED } from "@/lib/bank";
 import { useCart } from "@/lib/cart";
 import { formatAed, useI18n } from "@/lib/i18n";
-import { EMIRATES, totals } from "@/lib/shop";
+import { EMIRATES, totals, whatsappLink } from "@/lib/shop";
 import { useAuth } from "@/lib/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,10 +51,10 @@ function Checkout() {
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
   const discount = coupon ? Math.min(coupon.discount, itemsTotal) : 0;
-  const sums = totals(itemsTotal - discount, form.emirate);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<number | null>(null);
+  const [doneSummary, setDoneSummary] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "bank_transfer">("cod");
   const [doneMethod, setDoneMethod] = useState<"cod" | "bank_transfer">("cod");
   const [form, setForm] = useState({
@@ -69,6 +69,7 @@ function Checkout() {
     delivery_slot: "morning",
     notes: "",
   });
+  const sums = totals(itemsTotal - discount, form.emirate);
 
   function set(key: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -107,6 +108,15 @@ function Checkout() {
           items: items.map((i) => ({ productId: i.productId, variantId: i.variantId ?? null, packageId: i.packageId ?? null, qty: i.qty })),
         },
       });
+      setDoneSummary(
+        [
+          `Order #${res.orderNumber} — Al Adeel Furniture`,
+          ...items.map((i) => `• ${i.qty} × ${i.name_en} — AED ${(i.price * i.qty).toFixed(2)}`),
+          `Total: AED ${sums.grand.toFixed(2)}`,
+          `Name: ${form.customer_name}`,
+          `Delivery: ${form.area}, ${form.emirate}`,
+        ].join("\n"),
+      );
       clear();
       setOrderId(res.id);
       setDone(res.orderNumber);
@@ -128,6 +138,19 @@ function Checkout() {
           {t("orderNumber")}: <span className="font-semibold text-foreground">#{done}</span>
         </p>
         <p className="mt-2 text-muted-foreground">{t("weWillCall")}</p>
+        {doneSummary && (
+          <a
+            href={whatsappLink(doneSummary)}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            {pick("Send order summary on WhatsApp", "أرسل ملخص الطلب عبر واتساب")}
+          </a>
+        )}
+        <p className="mt-4 text-sm text-muted-foreground">
+          <Link to="/track" className="underline">{pick("Track your order", "تتبع طلبك")}</Link>
+        </p>
         {doneMethod === "bank_transfer" && (
           <div className="mx-auto mt-6 max-w-md rounded-lg border border-border bg-card p-5 text-start text-sm">
             <h2 className="mb-3 font-semibold">{t("bankDetails")}</h2>

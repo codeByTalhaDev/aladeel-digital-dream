@@ -77,10 +77,10 @@ function CartPage() {
             <Row label={t("vat")} value={formatAed(sums.vat, lang)} />
             <Row
               label={t("deliveryFee")}
-              value={sums.delivery === 0 ? t("free") : formatAed(sums.delivery, lang)}
+              value={sums.delivery === 0 ? t("free") : pick("Set at checkout by emirate", "تُحدد عند الدفع حسب الإمارة")}
             />
             <div className="border-t border-border pt-3">
-              <Row label={t("total")} value={formatAed(sums.grand, lang)} bold />
+              <Row label={t("total")} value={formatAed(sums.grand - sums.delivery, lang)} bold />
             </div>
             <Button asChild className="w-full" size="lg">
               <Link to="/checkout">{t("checkout")}</Link>
