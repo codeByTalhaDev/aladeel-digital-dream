@@ -35,6 +35,7 @@ export const checkCoupon = createServerFn({ method: "POST" })
     z.object({ code: z.string().trim().min(1).max(40), itemsTotal: z.number().min(0) }).parse(d),
   )
   .handler(async ({ data }) => {
+    if (!rateLimit("coupon-check", 20, 5 * 60_000)) throw new Error("Too many attempts. Please try again later.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: c } = await supabaseAdmin
       .from("coupons")
