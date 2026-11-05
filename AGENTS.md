@@ -12,3 +12,4 @@
 - Public catalog policies must separate anonymous active-item reads from authenticated admin reads, so visitor queries never invoke restricted role checks.
 - Orders are written only via the `place_order_atomic` Postgres function (service role) so stock, coupon use and order rows commit together.
 - Schema changes live only in drizzle/migrations; there is no supabase/migrations folder.
+- Product photos in the private `product-images` bucket are served through `/api/public/product-images/<path>` (validated, rate-limited streaming proxy); never restore a public SELECT policy on storage.objects for that bucket, and store photo paths — not public storage URLs — in product/package image fields.
