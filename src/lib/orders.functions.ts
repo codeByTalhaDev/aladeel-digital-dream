@@ -3,6 +3,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { totals, EMIRATES } from "./shop";
 import { BANK_TRANSFER_ENABLED } from "./bank";
+import { rateLimit } from "./ratelimit.server";
 
 export const UAE_PHONE = /^(?:\+?971|0)?5\d{8}$|^(?:\+?971|0)[2-9]\d{7}$/;
 function todayUae() {

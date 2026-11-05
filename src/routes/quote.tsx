@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { submitQuote } from "@/lib/quote.functions";
 import { EMIRATES } from "@/lib/shop";
@@ -71,6 +70,11 @@ function QuotePage() {
           </select>
         </div>
         <div className="space-y-1.5"><Label htmlFor="qd">{pick("What do you need?", "ماذا تحتاج؟")}</Label><Textarea id="qd" rows={5} value={f.details} onChange={set("details")} maxLength={2000} required /></div>
+        {/* Honeypot — hidden from people, catches bots */}
+        <div className="hidden" aria-hidden="true">
+          <Label htmlFor="qcompany">Company</Label>
+          <Input id="qcompany" value={f.company} onChange={set("company")} tabIndex={-1} autoComplete="off" />
+        </div>
         <Button type="submit" disabled={busy} className="w-full">{pick("Send request", "إرسال الطلب")}</Button>
       </form>
     </div>
