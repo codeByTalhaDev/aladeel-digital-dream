@@ -72,7 +72,7 @@ export const DELIVERY_BY_EMIRATE: Record<string, number> = {
 
 export function deliveryFee(itemsTotal: number, emirate?: string) {
   if (itemsTotal === 0 || itemsTotal >= FREE_DELIVERY_THRESHOLD) return 0;
-  return (emirate && DELIVERY_BY_EMIRATE[emirate]) ?? DELIVERY_FEE;
+  return (emirate ? DELIVERY_BY_EMIRATE[emirate] : undefined) ?? DELIVERY_FEE;
 }
 
 export function totals(itemsTotal: number, emirate?: string) {
