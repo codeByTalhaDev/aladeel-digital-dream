@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { rateLimit, clientIp } from "./ratelimit.server";
 
-const quoteSchema = z.object({
+export const quoteSchema = z.object({
   name: z.string().trim().min(2).max(100),
   phone: z.string().trim().min(7).max(20),
   email: z.string().trim().email().max(255).or(z.literal("")),
