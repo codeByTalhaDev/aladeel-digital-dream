@@ -26,8 +26,8 @@ function parsePath(pathname: string): string | null {
 
 /**
  * Public proxy for product photos stored in the private product-images bucket.
- * Validates the object path, rate-limits callers, then redirects to a
- * short-lived signed URL. The bucket itself has no public read policy.
+ * Validates the object path, rate-limits callers, then streams the image bytes
+ * through the app. The bucket itself has no public read policy.
  */
 export const Route = createFileRoute("/api/public/product-images/$")({
   server: {
@@ -42,17 +42,25 @@ export const Route = createFileRoute("/api/public/product-images/$")({
           return new Response("Too many requests", { status: 429 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin.storage
-          .from("product-images")
-          .createSignedUrl(objectPath, 60 * 60);
+        const { data, error } = await supabaseAdmin.storage.from("product-images").download(objectPath);
         if (error || !data) {
           return new Response("Not found", { status: 404 });
         }
-        return new Response(null, {
-          status: 302,
+        const ext = objectPath.split(".").pop()!.toLowerCase();
+        const types: Record<string, string> = {
+          jpg: "image/jpeg",
+          jpeg: "image/jpeg",
+          png: "image/png",
+          webp: "image/webp",
+          gif: "image/gif",
+          avif: "image/avif",
+        };
+        const bytes = await data.arrayBuffer();
+        return new Response(bytes, {
+          status: 200,
           headers: {
-            Location: data.signedUrl,
-            "Cache-Control": "public, max-age=300",
+            "Content-Type": types[ext] ?? "application/octet-stream",
+            "Cache-Control": "public, max-age=86400",
           },
         });
       },
