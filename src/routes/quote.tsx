@@ -45,7 +45,7 @@ function QuotePage() {
       details: f.details.trim().slice(0, 2000),
     });
     setBusy(false);
-    if (error) return toast.error(pick("Could not send. Please try again.", "تعذر الإرسال. حاول مرة أخرى."));
+    if (error) { toast.error(pick("Could not send. Please try again.", "تعذر الإرسال. حاول مرة أخرى.")); return; }
     setSent(true);
   }
 
