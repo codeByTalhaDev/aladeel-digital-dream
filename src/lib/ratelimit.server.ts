@@ -7,7 +7,7 @@ const buckets = new Map<string, Bucket>();
 
 function clientIp(): string {
   const fwd = getRequestHeader("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
+  if (fwd) return fwd.split(",")[0]!.trim();
   return getRequestHeader("cf-connecting-ip") ?? "unknown";
 }
 
