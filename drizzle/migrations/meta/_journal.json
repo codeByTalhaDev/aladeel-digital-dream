@@ -71,6 +71,13 @@
       "when": 1793862576149,
       "tag": "0009_quote_requests_client_ip",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793862979997,
+      "tag": "0010_tighten_public_reads_and_image_rules",
+      "breakpoints": true
     }
   ]
 }
