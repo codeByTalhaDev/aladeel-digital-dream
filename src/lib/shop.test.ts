@@ -21,3 +21,10 @@ describe("isAvailable", () => {
     expect(isAvailable({ stock_status: "made_to_order", stock_qty: 0 })).toBe(true));
   it("in stock with zero qty is not", () => expect(isAvailable({ stock_status: "in_stock", stock_qty: 0 })).toBe(false));
 });
+
+import { deliveryFee as _fee } from "./shop";
+describe("delivery by emirate", () => {
+  it("charges Abu Dhabi 250 below free threshold", () => expect(_fee(1000, "Abu Dhabi")).toBe(250));
+  it("charges Ras Al Khaimah 100", () => expect(_fee(1000, "Ras Al Khaimah")).toBe(100));
+  it("is free at 3000 and above", () => expect(_fee(3000, "Abu Dhabi")).toBe(0));
+});
