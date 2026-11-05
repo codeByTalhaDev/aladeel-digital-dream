@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { submitQuote } from "@/lib/quote.functions";
 import { EMIRATES } from "@/lib/shop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/quote")({
 
 function QuotePage() {
   const { pick, lang } = useI18n();
-  const [f, setF] = useState({ name: "", phone: "", email: "", emirate: "", details: "" });
+  const [f, setF] = useState({ name: "", phone: "", email: "", emirate: "", details: "", company: "" });
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
@@ -37,16 +37,13 @@ function QuotePage() {
       return;
     }
     setBusy(true);
-    const { error } = await supabase.from("quote_requests").insert({
-      name: f.name.trim().slice(0, 100),
-      phone: f.phone.trim().slice(0, 20),
-      email: f.email.trim().slice(0, 255) || null,
-      emirate: f.emirate || null,
-      details: f.details.trim().slice(0, 2000),
-    });
+    try {
+      await submitQuote({ data: { ...f, company: f.company, email: f.email.trim() } });
+      setSent(true);
+    } catch {
+      toast.error(pick("Could not send. Please try again.", "تعذر الإرسال. حاول مرة أخرى."));
+    }
     setBusy(false);
-    if (error) { toast.error(pick("Could not send. Please try again.", "تعذر الإرسال. حاول مرة أخرى.")); return; }
-    setSent(true);
   }
 
   if (sent)
@@ -73,6 +70,11 @@ function QuotePage() {
           </select>
         </div>
         <div className="space-y-1.5"><Label htmlFor="qd">{pick("What do you need?", "ماذا تحتاج؟")}</Label><Textarea id="qd" rows={5} value={f.details} onChange={set("details")} maxLength={2000} required /></div>
+        {/* Honeypot — hidden from people, catches bots */}
+        <div className="hidden" aria-hidden="true">
+          <Label htmlFor="qcompany">Company</Label>
+          <Input id="qcompany" value={f.company} onChange={set("company")} tabIndex={-1} autoComplete="off" />
+        </div>
         <Button type="submit" disabled={busy} className="w-full">{pick("Send request", "إرسال الطلب")}</Button>
       </form>
     </div>

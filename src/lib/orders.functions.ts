@@ -3,6 +3,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { totals, EMIRATES } from "./shop";
 import { BANK_TRANSFER_ENABLED } from "./bank";
+import { rateLimit } from "./ratelimit.server";
 
 export const UAE_PHONE = /^(?:\+?971|0)?5\d{8}$|^(?:\+?971|0)[2-9]\d{7}$/;
 function todayUae() {
@@ -34,6 +35,7 @@ export const checkCoupon = createServerFn({ method: "POST" })
     z.object({ code: z.string().trim().min(1).max(40), itemsTotal: z.number().min(0) }).parse(d),
   )
   .handler(async ({ data }) => {
+    if (!rateLimit("coupon-check", 20, 5 * 60_000)) throw new Error("Too many attempts. Please try again later.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: c } = await supabaseAdmin
       .from("coupons")
@@ -71,6 +73,7 @@ const orderSchema = z.object({
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => orderSchema.parse(d))
   .handler(async ({ data }) => {
+    if (!rateLimit("order", 5, 15 * 60_000)) throw new Error("Too many orders from this device. Please try again later.");
     if (data.payment_method === "bank_transfer" && !BANK_TRANSFER_ENABLED) throw new Error("Bank transfer is not available yet.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 

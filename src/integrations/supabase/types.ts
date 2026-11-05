@@ -428,6 +428,7 @@ export type Database = {
       }
       quote_requests: {
         Row: {
+          client_ip: string | null
           created_at: string
           details: string
           email: string | null
@@ -438,6 +439,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          client_ip?: string | null
           created_at?: string
           details: string
           email?: string | null
@@ -448,6 +450,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          client_ip?: string | null
           created_at?: string
           details?: string
           email?: string | null
