@@ -72,6 +72,7 @@ const orderSchema = z.object({
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => orderSchema.parse(d))
   .handler(async ({ data }) => {
+    if (!rateLimit("order", 5, 15 * 60_000)) throw new Error("Too many orders from this device. Please try again later.");
     if (data.payment_method === "bank_transfer" && !BANK_TRANSFER_ENABLED) throw new Error("Bank transfer is not available yet.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
