@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          is_active: boolean
           name_ar: string
           name_en: string
           slug: string
@@ -28,6 +29,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_active?: boolean
           name_ar: string
           name_en: string
           slug: string
@@ -37,6 +39,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_active?: boolean
           name_ar?: string
           name_en?: string
           slug?: string
@@ -507,6 +510,7 @@ export type Database = {
         Row: {
           body_ar: string
           body_en: string
+          is_published: boolean
           slug: string
           title_ar: string
           title_en: string
@@ -515,6 +519,7 @@ export type Database = {
         Insert: {
           body_ar?: string
           body_en?: string
+          is_published?: boolean
           slug: string
           title_ar: string
           title_en: string
@@ -523,6 +528,7 @@ export type Database = {
         Update: {
           body_ar?: string
           body_en?: string
+          is_published?: boolean
           slug?: string
           title_ar?: string
           title_en?: string
@@ -532,18 +538,21 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          is_public: boolean
           key: string
           updated_at: string
           value_ar: string
           value_en: string
         }
         Insert: {
+          is_public?: boolean
           key: string
           updated_at?: string
           value_ar?: string
           value_en?: string
         }
         Update: {
+          is_public?: boolean
           key?: string
           updated_at?: string
           value_ar?: string

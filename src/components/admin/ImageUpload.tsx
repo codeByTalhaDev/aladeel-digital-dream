@@ -26,8 +26,9 @@ export function ImageUpload({ onUploaded }: { onUploaded: (url: string) => void 
       toast.error(error.message);
       return;
     }
-    const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-    onUploaded(data.publicUrl);
+    // The bucket is private: photos are served through the app's signed-URL
+    // proxy route instead of a public storage link.
+    onUploaded(`/api/public/product-images/${path}`);
     toast.success("Photo uploaded");
   }
 

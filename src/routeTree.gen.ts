@@ -35,6 +35,7 @@ import { Route as AuthenticatedAdminCouponsNewRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminOrdersIdRouteImport } from './routes/_authenticated/admin_.orders.$id'
 import { Route as AuthenticatedAdminPackagesNewRouteImport } from './routes/_authenticated/admin_.packages.new'
 import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin_.products.new'
+import { Route as ApiPublicProductImagesSplatRouteImport } from './routes/api/public/product-images.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -169,6 +170,12 @@ const AuthenticatedAdminProductsNewRoute =
     path: '/admin/products/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicProductImagesSplatRoute =
+  ApiPublicProductImagesSplatRouteImport.update({
+    id: '/api/public/product-images/$',
+    path: '/api/public/product-images/$',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
   '/admin/packages/new': typeof AuthenticatedAdminPackagesNewRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/api/public/product-images/$': typeof ApiPublicProductImagesSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -223,6 +231,7 @@ export interface FileRoutesByTo {
   '/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
   '/admin/packages/new': typeof AuthenticatedAdminPackagesNewRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/api/public/product-images/$': typeof ApiPublicProductImagesSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -252,6 +261,7 @@ export interface FileRoutesById {
   '/_authenticated/admin_/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
   '/_authenticated/admin_/packages/new': typeof AuthenticatedAdminPackagesNewRoute
   '/_authenticated/admin_/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/api/public/product-images/$': typeof ApiPublicProductImagesSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/admin/orders/$id'
     | '/admin/packages/new'
     | '/admin/products/new'
+    | '/api/public/product-images/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/admin/orders/$id'
     | '/admin/packages/new'
     | '/admin/products/new'
+    | '/api/public/product-images/$'
   id:
     | '__root__'
     | '/'
@@ -336,6 +348,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin_/orders/$id'
     | '/_authenticated/admin_/packages/new'
     | '/_authenticated/admin_/products/new'
+    | '/api/public/product-images/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -357,6 +370,7 @@ export interface RootRouteChildren {
   PackagesSlugRoute: typeof PackagesSlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
   PackagesIndexRoute: typeof PackagesIndexRoute
+  ApiPublicProductImagesSplatRoute: typeof ApiPublicProductImagesSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -543,6 +557,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProductsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/product-images/$': {
+      id: '/api/public/product-images/$'
+      path: '/api/public/product-images/$'
+      fullPath: '/api/public/product-images/$'
+      preLoaderRoute: typeof ApiPublicProductImagesSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -590,6 +611,7 @@ const rootRouteChildren: RootRouteChildren = {
   PackagesSlugRoute: PackagesSlugRoute,
   ProductSlugRoute: ProductSlugRoute,
   PackagesIndexRoute: PackagesIndexRoute,
+  ApiPublicProductImagesSplatRoute: ApiPublicProductImagesSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
