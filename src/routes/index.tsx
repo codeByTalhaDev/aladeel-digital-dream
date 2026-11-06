@@ -90,7 +90,7 @@ function Home() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/50 to-black/25" />
         <div className="container-page flex min-h-[70vh] flex-col justify-end py-16 text-white sm:py-24">
           <p className="hero-kicker mb-3 text-xs uppercase tracking-[0.3em] text-brass">{t("heroKicker")}</p>
-          <h1 className="heading-xl max-w-3xl">{t("heroTitle")}</h1>
+          <h1 className="heading-xl min-h-[2.1em] max-w-3xl">{t("heroTitle")}</h1>
           <p className="mt-4 max-w-xl text-base text-white/85">{t("heroSub")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
