@@ -175,6 +175,29 @@
   font-weight: 600;
 }
 
+/* Arabic renders with Noto Kufi Arabic, which is much heavier and tighter
+   than the Latin display serif — match the English visual size and keep
+   letter joins intact (letter-spacing breaks Arabic shaping). */
+[dir="rtl"] .heading-xl {
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+[dir="rtl"] .heading-section {
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+[dir="rtl"] :is(h1, h2, h3) {
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .hero-kicker {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
 @utility heading-section {
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 2.4rem);

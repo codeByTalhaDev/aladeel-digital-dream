@@ -33,6 +33,7 @@ const dict = {
   fullName: { en: "Full name", ar: "الاسم الكامل" },
   phone: { en: "Phone", ar: "رقم الهاتف" },
   heroTitle: { en: "Furniture made for UAE homes", ar: "أثاث يليق ببيوت الإمارات" },
+  heroKicker: { en: "Ras Al Khaimah · U.A.E.", ar: "رأس الخيمة · الإمارات" },
   heroSub: {
     en: "Sofas, majlis, bedrooms and fitted kitchens — delivered and assembled across the UAE from our Ras Al Khaimah showroom.",
     ar: "كنب، مجالس، غرف نوم ومطابخ تفصيل — توصيل وتركيب في جميع أنحاء الإمارات من معرضنا في رأس الخيمة.",
